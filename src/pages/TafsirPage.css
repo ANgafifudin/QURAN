@@ -1,0 +1,78 @@
+:root {
+    --font-size-base: 18px;
+    --font-size-heading: 28px;
+    --font-size-ayat: 20px;
+  }
+  
+  .tafsir-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #fefefe;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  
+  .tafsir-container h2 {
+    font-size: var(--font-size-heading);
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  
+  .tafsir-container ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .tafsir-container li {
+    font-size: var(--font-size-base);
+    margin-bottom: 16px;
+    line-height: 1.8;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 12px;
+  }
+  
+  .tafsir-container li strong {
+    font-size: var(--font-size-ayat);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .font-slider {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  
+  .font-slider label {
+    font-size: 16px;
+  }  
+
+  .tafsir-container {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+  }
+  
+  .font-slider {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .font-slider label {
+    font-size: 16px;
+  }
+  
+  @media (max-width: 600px) {
+    :root {
+      --font-size-base: 16px;
+      --font-size-heading: 22px;
+      --font-size-ayat: 18px;
+    }
+  }
+  

@@ -1,0 +1,34 @@
+.surah-list-container {
+    padding: 16px;
+  }
+  
+  .surah-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  
+  .surah-card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .surah-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background-color: #f9f9f9;
+  }
+  
+  .surah-card h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
+  }
+  
+  .surah-card p {
+    margin: 4px 0;
+    color: #555;
+  }
+  
