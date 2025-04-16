@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import './SearchBar.css';
 
 function SearchBar() {
-  const [input, setInput] = useState('');
+  const [inputSurah, setInputSurah] = useState('');
+  const [inputAyat, setInputAyat] = useState('');
   const [surahList, setSurahList] = useState([]);
   const navigate = useNavigate();
 
@@ -14,17 +15,20 @@ function SearchBar() {
   }, []);
 
   const handleSearch = () => {
-    if (!input) return alert("Masukkan nomor surat!");
-    navigate(`/surah/${input}`);
+    if (!inputSurah) return alert("Masukkan nomor surat!");
+    const url = inputAyat
+      ? `/surah/${inputSurah}?ayat=${inputAyat}`
+      : `/surah/${inputSurah}`;
+    navigate(url);
   };
 
   const handleTafsir = () => {
-    if (!input) return alert("Masukkan nomor surat!");
-    navigate(`/tafsir/${input}`);
+    if (!inputSurah) return alert("Masukkan nomor surat!");
+    navigate(`/tafsir/${inputSurah}`);
   };
 
   const handleDropdownChange = (e) => {
-    setInput(e.target.value);
+    setInputSurah(e.target.value);
   };
 
   return (
@@ -32,11 +36,11 @@ function SearchBar() {
       <div className="search-bar">
         <input 
           type="number"
-          placeholder="Masukkan nomor surat..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
+          placeholder="Nomor Surat..."
+          value={inputSurah}
+          onChange={(e) => setInputSurah(e.target.value)}
         />
-        <select onChange={handleDropdownChange} value={input}>
+        <select onChange={handleDropdownChange} value={inputSurah}>
           <option value="">Pilih Surat...</option>
           {surahList.map((surah) => (
             <option key={surah.nomor} value={surah.nomor}>
@@ -44,6 +48,13 @@ function SearchBar() {
             </option>
           ))}
         </select>
+        <input 
+          type="number"
+          placeholder="Nomor Ayat (opsional)..."
+          value={inputAyat}
+          onChange={(e) => setInputAyat(e.target.value)}
+          style={{ width: '160px' }}
+        />
         <button onClick={handleSearch}>Cari Ayat</button>
         <button onClick={handleTafsir}>Cari Tafsir</button>
       </div>
