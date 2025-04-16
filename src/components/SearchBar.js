@@ -24,7 +24,10 @@ function SearchBar() {
 
   const handleTafsir = () => {
     if (!inputSurah) return alert("Masukkan nomor surat!");
-    navigate(`/tafsir/${inputSurah}`);
+    const url = inputAyat
+      ? `/tafsir/${inputSurah}?ayat=${inputAyat}`
+      : `/tafsir/${inputSurah}`;
+    navigate(url);
   };
 
   const handleDropdownChange = (e) => {
