@@ -42,14 +42,13 @@ function SurahPage() {
     highlightAyat(ayatNomor);
   };
 
-  // Fetch data surat
   useEffect(() => {
     fetch(`https://equran.id/api/v2/surat/${nomor}`)
       .then(res => res.json())
       .then(data => setSurah(data.data));
   }, [nomor]);
 
-  // Autoplay saat halaman pertama kali dibuka
+  // Auto-play saat pertama load dengan ?autoplay=true
   useEffect(() => {
     if (surah && new URLSearchParams(location.search).get('autoplay') === 'true') {
       const firstAyat = surah.ayat[0].nomorAyat;
@@ -63,7 +62,7 @@ function SurahPage() {
     }
   }, [surah, location.search]);
 
-  // Scroll ke ayat tertentu jika ada query ?ayat=
+  // Scroll ke ayat tertentu kalau ada query ?ayat= di URL
   useEffect(() => {
     if (surah) {
       const params = new URLSearchParams(location.search);
@@ -78,18 +77,28 @@ function SurahPage() {
     }
   }, [surah, location]);
 
-  // Show tombol back to top
+  // Tampil tombol back to top saat scroll
   useEffect(() => {
     const handleScroll = () => setShowBackToTop(window.pageYOffset > 300);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Auto-scroll ke ayat yang sedang diputar
+  useEffect(() => {
+    if (playingAyat && surah) {
+      const el = document.getElementById(`ayat-${playingAyat}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        highlightAyat(playingAyat);
+      }
+    }
+  }, [playingAyat, surah]);
+
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   if (!surah) return <div>Loading...</div>;
 
-  // Filter ayat sesuai search
   const filteredAyat = surah.ayat.filter((ayat) =>
     ayat.teksArab.includes(searchText) ||
     ayat.teksIndonesia.toLowerCase().includes(searchText.toLowerCase())
@@ -116,13 +125,21 @@ function SurahPage() {
       <div className={styles.controls}>
         <div className={styles.fontSizeControl}>
           <label>Ukuran Font Arab: {fontSize}px</label>
-          <input type="range" min="24" max="60" value={fontSize}
-            onChange={(e) => setFontSize(Number(e.target.value))} />
+          <input
+            type="range"
+            min="24"
+            max="60"
+            value={fontSize}
+            onChange={(e) => setFontSize(Number(e.target.value))}
+          />
         </div>
 
         <div className={styles.murottalControl}>
           <label>Pilih Murottal:</label>
-          <select value={murottalVersion} onChange={(e) => setMurottalVersion(e.target.value)}>
+          <select
+            value={murottalVersion}
+            onChange={(e) => setMurottalVersion(e.target.value)}
+          >
             {Object.entries(qariList).map(([key, name]) => (
               <option key={key} value={key}>{name}</option>
             ))}
@@ -130,43 +147,71 @@ function SurahPage() {
         </div>
 
         <label className={styles.autoplayControl}>
-          <input type="checkbox"
+          <input
+            type="checkbox"
             checked={autoPlayNextSurah}
-            onChange={() => setAutoPlayNextSurah(!autoPlayNextSurah)} />
+            onChange={() => setAutoPlayNextSurah(!autoPlayNextSurah)}
+          />
           Auto Play Surah Berikutnya
         </label>
       </div>
 
       {/* List ayat */}
       <ul>
-        {filteredAyat.map((ayat) => (
-          <li key={ayat.nomorAyat}
+        {filteredAyat.map((ayat) => {
+          const isPlaying = playingAyat === ayat.nomorAyat;
+          const isHighlighted = highlightedAyat === ayat.nomorAyat;
+
+          return (
+            <li
+              key={ayat.nomorAyat}
               id={`ayat-${ayat.nomorAyat}`}
-              className={highlightedAyat === ayat.nomorAyat ? styles.highlightAyat : ''}>
-            <strong>{ayat.nomorAyat}</strong>.
-            <div className={`${styles.ayatArab} ${playingAyat === ayat.nomorAyat ? styles.playingAyat : ''}`}
-                 style={{ fontSize: `${fontSize}px` }}>
-              {ayat.teksArab}
-            </div>
-            <em>{ayat.teksIndonesia}</em><br />
-            <button className={`${styles.audioButton} ${playingAyat === ayat.nomorAyat ? styles.playing : ''}`}
-                    onClick={() => handlePlayAyat(ayat.nomorAyat)}>
-              <span className={styles.buttonIcon}>
-                {playingAyat === ayat.nomorAyat ? '🔄' : '▶️'}
-              </span>
-              {playingAyat === ayat.nomorAyat ? ' Playing' : ' Play'}
-            </button>
-            <audio ref={(el) => (audioRefs.current[ayat.nomorAyat] = el)}
-                   src={ayat.audio[murottalVersion]} />
-          </li>
-        ))}
+              className={isHighlighted ? styles.highlightAyat : ''}
+            >
+              <strong>{ayat.nomorAyat}</strong>.
+              <div
+                className={`
+                  ${styles.ayatArab}
+                  ${isPlaying ? styles.playingAyat : ''}
+                  ${isPlaying ? styles.fadeIn : ''}
+                `}
+                style={{ fontSize: `${fontSize}px` }}
+              >
+                {ayat.teksArab}
+              </div>
+              <em>{ayat.teksIndonesia}</em><br />
+              <button
+                className={`
+                  ${styles.audioButton}
+                  ${isPlaying ? styles.playing : ''}
+                `}
+                onClick={() => handlePlayAyat(ayat.nomorAyat)}
+              >
+                <span className={styles.buttonIcon}>
+                  {isPlaying ? '🔄' : '▶️'}
+                </span>
+                {isPlaying ? ' Playing' : ' Play'}
+              </button>
+              <audio
+                ref={(el) => (audioRefs.current[ayat.nomorAyat] = el)}
+                src={ayat.audio[murottalVersion]}
+              />
+            </li>
+          );
+        })}
       </ul>
 
       {/* Tombol ke atas */}
-      <button className={`${styles.backToTop} ${showBackToTop ? styles.show : ''}`}
-              onClick={scrollToTop}>
+      <button
+        className={`
+          ${styles.backToTop}
+          ${showBackToTop ? styles.show : ''}
+        `}
+        onClick={scrollToTop}
+      >
         <ChevronUp size={22} />
       </button>
+
     </div>
   );
 }

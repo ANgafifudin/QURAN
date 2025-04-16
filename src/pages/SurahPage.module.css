@@ -280,3 +280,33 @@ p {
     border-radius: 8px;
   }
   
+  .highlightAyat {
+    background-color: #ffeaa7;
+    transition: background-color 0.8s ease;
+  }
+  
+  .playingAyat {
+    color: #0984e3;
+    transition: color 0.4s ease;
+  }
+
+  @keyframes highlightFade {
+    0% { background-color: #ffeaa7; }
+    100% { background-color: transparent; }
+  }
+  
+  .highlightAyat {
+    animation: highlightFade 2.5s forwards;
+  }
+
+  .fadeIn {
+    opacity: 0;
+    animation: fadeInAnim 0.8s forwards;
+  }
+  
+  @keyframes fadeInAnim {
+    to {
+      opacity: 1;
+    }
+  }
+  
