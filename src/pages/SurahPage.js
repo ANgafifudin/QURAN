@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useLocation } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { useAudioPlayer } from '../hooks/useAudioPlayer';
 import { ChevronUp } from 'lucide-react';
 import styles from './SurahPage.module.css';
@@ -7,12 +7,14 @@ import styles from './SurahPage.module.css';
 function SurahPage() {
   const { nomor } = useParams();
   const location = useLocation();
+
   const [surah, setSurah] = useState(null);
   const [fontSize, setFontSize] = useState(36);
   const [murottalVersion, setMurottalVersion] = useState('05');
   const [autoPlayNextSurah, setAutoPlayNextSurah] = useState(true);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [highlightedAyat, setHighlightedAyat] = useState(null);
+  const [searchText, setSearchText] = useState('');
 
   const {
     audioRefs,
@@ -47,21 +49,21 @@ function SurahPage() {
       .then(data => setSurah(data.data));
   }, [nomor]);
 
-  // Autoplay saat buka halaman dengan ?autoplay=true
+  // Autoplay saat halaman pertama kali dibuka
   useEffect(() => {
     if (surah && new URLSearchParams(location.search).get('autoplay') === 'true') {
-      const firstAyatNomor = surah.ayat[0].nomorAyat;
-      const firstAudio = audioRefs.current[firstAyatNomor];
+      const firstAyat = surah.ayat[0].nomorAyat;
+      const firstAudio = audioRefs.current[firstAyat];
       if (firstAudio) {
         firstAudio.play();
-        setPlayingAyat(firstAyatNomor);
-        highlightAyat(firstAyatNomor);
-        firstAudio.onended = () => playNextAudio(surah, firstAyatNomor);
+        setPlayingAyat(firstAyat);
+        highlightAyat(firstAyat);
+        firstAudio.onended = () => playNextAudio(surah, firstAyat);
       }
     }
-  }, [surah, location.search, audioRefs, setPlayingAyat, playNextAudio]);
+  }, [surah, location.search]);
 
-  // Scroll ke ayat target jika ada query ?ayat=...
+  // Scroll ke ayat tertentu jika ada query ?ayat=
   useEffect(() => {
     if (surah) {
       const params = new URLSearchParams(location.search);
@@ -83,17 +85,34 @@ function SurahPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   if (!surah) return <div>Loading...</div>;
 
+  // Filter ayat sesuai search
+  const filteredAyat = surah.ayat.filter((ayat) =>
+    ayat.teksArab.includes(searchText) ||
+    ayat.teksIndonesia.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   return (
     <div className={styles.pageContainer}>
+
+      {/* Search bar */}
+      <div className={styles.searchControl}>
+        <input
+          type="text"
+          placeholder="Cari teks ayat"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+        />
+      </div>
+
+      {/* Judul surah */}
       <h2>{surah.namaLatin} ({surah.nama})</h2>
       <p>Jumlah Ayat: {surah.jumlahAyat}</p>
 
+      {/* Controls */}
       <div className={styles.controls}>
         <div className={styles.fontSizeControl}>
           <label>Ukuran Font Arab: {fontSize}px</label>
@@ -118,8 +137,9 @@ function SurahPage() {
         </label>
       </div>
 
+      {/* List ayat */}
       <ul>
-        {surah.ayat.map((ayat) => (
+        {filteredAyat.map((ayat) => (
           <li key={ayat.nomorAyat}
               id={`ayat-${ayat.nomorAyat}`}
               className={highlightedAyat === ayat.nomorAyat ? styles.highlightAyat : ''}>
@@ -142,8 +162,7 @@ function SurahPage() {
         ))}
       </ul>
 
-      <Link to="/" className={styles.backButton}>Kembali</Link>
-
+      {/* Tombol ke atas */}
       <button className={`${styles.backToTop} ${showBackToTop ? styles.show : ''}`}
               onClick={scrollToTop}>
         <ChevronUp size={22} />

@@ -1,0 +1,33 @@
+.pageContainer {
+    padding: 20px;
+  }
+  
+  .searchInput {
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .surahList {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .surahList li {
+    margin: 10px 0;
+  }
+  
+  .surahList a {
+    text-decoration: none;
+    color: #333;
+    font-size: 18px;
+  }
+  
+  .surahList a:hover {
+    color: #007bff;
+  }
+  

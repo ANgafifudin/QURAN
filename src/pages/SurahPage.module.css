@@ -208,3 +208,75 @@ p {
     outline: none;
   }
   
+  .searchControl {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .searchControl input {
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 400px;
+    transition: border 0.2s, box-shadow 0.2s;
+  }
+  
+  .searchControl input:focus {
+    border-color: #facc15; /* kuning */
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.3);
+  }
+  
+  .suggestionList {
+    background: #fff;
+    border: 1px solid #ccc;
+    list-style: none;
+    padding: 8px;
+    margin: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    border-radius: 6px;
+  }
+  
+  .suggestionList li {
+    padding: 8px;
+    cursor: pointer;
+  }
+  
+  .suggestionList li:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .jumpControl {
+    margin: 20px 0;
+  }
+  
+  .jumpControl label {
+    margin-right: 10px;
+    font-weight: bold;
+  }
+  
+  .jumpControl select {
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  
+  .searchControl input {
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
